@@ -1,2 +1,2 @@
 # pq-builder
-A lightweight, expressive, framework agnostic query builder for PHP.
+A lightweight, expressive query builder for PHP.
