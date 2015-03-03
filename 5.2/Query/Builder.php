@@ -1,5 +1,11 @@
 <?php
-
+/**
+ * pq-builder for php <= 5.2
+ * A simple, lightweight, expressive query builder for PHP.
+ * @author high5
+ * @package pq-builder
+ * @version 0.1
+ */
 class QueryBuilder
 {
 
@@ -382,6 +388,11 @@ class QueryBuilder
         array_walk_recursive($array, function($x) use (&$return) { $return[] = $x; });
         return $return;
         */
+        foreach ($array as $k => $v) {
+            if (count($array[$k]) == 0) {
+                unset($array[$k]);
+            }
+        }
         $arr = array_values($array);
         while (list($k, $v) = each($arr)) {
             if (is_array($v)) {
