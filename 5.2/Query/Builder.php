@@ -5,26 +5,66 @@ class QueryBuilder
 
     protected $model;
 
+    /**
+     * The database connection instance.
+     */
     protected $connection;
 
+    /**
+     * The table which the query is targeting.
+     *
+     * @var string
+     */
     protected $table;
+
 
     protected $tableAs = null;
 
+    /**
+     * The columns that should be returned.
+     *
+     * @var array
+     */
     protected $columns = array('*');
 
+    /**
+     * The table joins for the query.
+     *
+     * @var array
+     */
     protected $joinSql = array();
 
+    /**
+     * The where constraints for the query.
+     *
+     * @var array
+     */
     protected $whereSql = null;
 
+    /**
+     * The orderings for the query.
+     *
+     * @var array
+     */
     protected $orderSql = null;
+
 
     protected $groupSql = null;
 
     protected $havingSql = null;
 
+    /**
+     * The number of records to skip.
+     *
+     * @var int
+     */
     protected $offset = null;
 
+    /**
+     * The maximum number of records to return.
+     *
+     * @var int
+     */
     protected $limit = null;
 
 
@@ -44,18 +84,28 @@ class QueryBuilder
 
     public function __construct($connection, $table = null)
     {
-        //$this->model      = $model;
         $this->connection = $connection;
         $this->table = $table;
     }
 
+    /**
+     * Set the table which the query is targeting.
+     *
+     * @param  string  $table
+     * @return $this
+     */
     public function table($table)
     {
         $this->table = $table;
         return $this;
     }
 
-
+    /**
+     * Set the table which the query is targeting.
+     *
+     * @param  string  $table
+     * @return $this
+     */
     public function from($table)
     {
         $this->table = $table;
@@ -308,15 +358,20 @@ class QueryBuilder
      */
     public static function flatten($array)
     {
+        $arr = array_values($array);
+        while (list($k,$v)=each($arr)) {
+            if (is_array($v)) {
+                array_splice($arr,$k,1,$v);
+                next($arr);
+            }
+        }
+        return $arr;
+
+        /* >= php5.3
         $return = array();
         array_walk_recursive($array, function($x) use (&$return) { $return[] = $x; });
         return $return;
+        */
     }
 
-
-
-    public function test()
-    {
-        echo 'test';
-    }
 }
