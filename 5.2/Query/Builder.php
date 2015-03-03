@@ -76,6 +76,7 @@ class QueryBuilder
     protected $bindings = array(
         'where'  => [],
         'having' => [],
+        'offset' => [],
         'limit'  => [],
     );
 
@@ -208,7 +209,7 @@ class QueryBuilder
     public function offset($param)
     {
         $this->offset = '?';
-        $this->addBinding($param, 'limit');
+        $this->addBinding($param, 'offset');
         return $this;
     }
 

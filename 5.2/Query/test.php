@@ -86,6 +86,19 @@ $test->is($r->getBindings(), array(2, 5, 10), 'array(2, 5, 10)');
 $test->is($r->getSql(), $expected, $expected);
 
 
+$expected = "SELECT id, name FROM sample WHERE id = ? ORDER BY id DESC, name LIMIT ?, ?";
+$qb = new QueryBuilder('master');
+$r = $qb->table('sample');
+$r->limit(10);
+$r->offset(5);
+$r->orderBY(array('id DESC', 'name'));
+$r->where('id = ?', array(2));
+$r->select(array('id', 'name'));
+$test->is($r->getBindings(), array(2, 5, 10), 'array(2, 5, 10)');
+$test->is($r->getSql(), $expected, $expected);
+
+
+
 $expected = "SELECT id, name FROM sample WHERE id = ? ORDER BY id DESC, name LIMIT ?";
 $qb = new QueryBuilder('master');
 $r = $qb->table('sample')
@@ -97,6 +110,13 @@ $test->is($r->getBindings(), array(2, 10), 'array(2, 10)');
 $test->is($r->getSql(), $expected, $expected);
 
 
-$test->diag('6');
+$expected = "SELECT s1.sample_id as id, s2.name FROM sample1 s1 LEFT JOIN sample2 s2 ON s1.sample_id = s2.sample_id WHERE id = ? AND s1.name = ?";
+$qb = new QueryBuilder('master');
+$r = $qb->table('sample1 s1')
+    ->select(array('s1.sample_id as id', 's2.name'))
+    ->leftJoin('sample2 s2', 's1.sample_id = s2.sample_id')
+    ->where('id = ? AND s1.name = ?', array(2, 'KEN'));
+$test->is($r->getBindings(), array(2, 'KEN'), "array(2, 'KEN')");
+$test->is($r->getSql(), $expected, $expected);
 
 
