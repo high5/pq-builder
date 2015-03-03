@@ -124,7 +124,6 @@ $expected = "SELECT * FROM sample LIMIT ?";
 $qb = new QueryBuilder('master');
 $r = $qb->table('sample')
     ->limit(10);
-
 $test->is($r->getBindings(), array(10), "array(10)");
 $test->is($r->getSql(), $expected, $expected);
 

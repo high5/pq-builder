@@ -253,7 +253,11 @@ class QueryBuilder
         if (is_array($value)) {
             $this->bindings[$type] = array_values(array_merge($this->bindings[$type], $value));
         } else {
-            $this->bindings[$type][] = $value;
+            if ($type == 'offset' || $type == 'limit') {
+                $this->bindings[$type][0] = $value;
+            } else {
+                $this->bindings[$type][] = $value;
+            }
         }
 
         return $this;
