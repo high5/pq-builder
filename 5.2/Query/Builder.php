@@ -12,73 +12,70 @@ class QueryBuilder
 
     /**
      * The table which the query is targeting.
-     *
      * @var string
      */
-    protected $table;
+    protected $table = '';
 
-
+    /**
+     * @var null
+     */
     protected $tableAs = null;
 
     /**
      * The columns that should be returned.
-     *
      * @var array
      */
     protected $columns = array('*');
 
     /**
      * The table joins for the query.
-     *
      * @var array
      */
     protected $joinSql = array();
 
     /**
      * The where constraints for the query.
-     *
-     * @var array
+     * @var null
      */
     protected $whereSql = null;
 
     /**
      * The orderings for the query.
-     *
-     * @var array
+     * @var null
      */
     protected $orderSql = null;
 
-
+    /**
+     * The groupings for the query.
+     * @var null
+     */
     protected $groupSql = null;
 
+    /**
+     * The having constraints for the query.
+     * @var null
+     */
     protected $havingSql = null;
 
     /**
      * The number of records to skip.
-     *
-     * @var int
+     * @var null
      */
     protected $offset = null;
 
     /**
      * The maximum number of records to return.
-     *
-     * @var int
+     * @var null
      */
     protected $limit = null;
 
-
     /**
      * The current query value bindings.
-     *
      * @var array
      */
     protected $bindings = array(
-        //'select' => [],
-        //'join'   => [],
         'where'  => [],
         'having' => [],
-        //'order'  => [],
         'limit'  => [],
     );
 
@@ -91,7 +88,6 @@ class QueryBuilder
 
     /**
      * Set the table which the query is targeting.
-     *
      * @param  string  $table
      * @return $this
      */
@@ -103,7 +99,6 @@ class QueryBuilder
 
     /**
      * Set the table which the query is targeting.
-     *
      * @param  string  $table
      * @return $this
      */
@@ -113,7 +108,10 @@ class QueryBuilder
         return $this;
     }
 
-
+    /**
+     * @param $v
+     * @return $this
+     */
     public function fromAs($v)
     {
         $this->tableAs = "as {$v}";
@@ -202,23 +200,36 @@ class QueryBuilder
         return $this;
     }
 
+    /**
+     * Set the "offset" value of the query.
+     * @param $param
+     * @return $this
+     */
     public function offset($param)
     {
-        $this->offset = $param;
+        $this->offset = '?';
+        $this->addBinding($param, 'limit');
         return $this;
     }
 
+    /**
+     * Set the "limit" value of the query.
+     * @param $param1
+     * @param null $param2
+     * @return $this
+     */
     public function limit($param1, $param2 = null)
     {
         if (!is_null($param2)) {
-            $this->offset = $param1;
-            $this->limit = $param2;
+            $this->offset($param1);
+            $this->limit = '?';
+            $this->addBinding($param2, 'limit');
         } else {
-            $this->limit = $param1;
+            $this->limit = '?';
+            $this->addBinding($param1, 'limit');
         }
         return $this;
     }
-
 
     /**
      * Add a binding to the query.
@@ -251,7 +262,7 @@ class QueryBuilder
     }
 
     /**
-     * クエリを生成してかえす
+     * return generated query
      * @return string
      */
     public function getSql()
@@ -298,11 +309,11 @@ class QueryBuilder
         }
         if (!is_null($this->limit)) {
             if (!is_null($this->offset)) {
-                $offset = (int)$this->offset;
-                $limit = (int)$this->limit;
+                $offset = $this->offset;
+                $limit = $this->limit;
                 $limitSql = "{$offset}, {$limit}";
             } else {
-                $limit = (int)$this->limit;
+                $limit = $this->limit;
                 $limitSql = "{$limit}";
             }
             $sqlQuery .= " LIMIT {$limitSql}";
@@ -365,20 +376,19 @@ class QueryBuilder
      */
     public static function flatten($array)
     {
-        $arr = array_values($array);
-        while (list($k,$v)=each($arr)) {
-            if (is_array($v)) {
-                array_splice($arr,$k,1,$v);
-                next($arr);
-            }
-        }
-        return $arr;
-
         /* >= php5.3
         $return = array();
         array_walk_recursive($array, function($x) use (&$return) { $return[] = $x; });
         return $return;
         */
+        $arr = array_values($array);
+        while (list($k, $v) = each($arr)) {
+            if (is_array($v)) {
+                array_splice($arr, $k, 1, $v);
+                next($arr);
+            }
+        }
+        return $arr;
     }
 
 }
