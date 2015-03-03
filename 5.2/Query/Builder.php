@@ -79,6 +79,7 @@ class QueryBuilder
         'where'  => [],
         'having' => [],
         //'order'  => [],
+        'limit'  => [],
     );
 
 
@@ -142,6 +143,12 @@ class QueryBuilder
         return $this;
     }
 
+    /**
+     * Add a left join to the query.
+     * @param $table
+     * @param $on
+     * @return $this
+     */
     public function leftJoin($table, $on)
     {
         $this->joinSql[] = "LEFT JOIN {$table} ON {$on}";

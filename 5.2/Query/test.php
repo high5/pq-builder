@@ -62,8 +62,24 @@ $r = $qb->table('sample')
 $test->is($r->getSql(), $expected, $expected);
 
 
+$expected = "SELECT id, name FROM sample WHERE id = ? ORDER BY id DESC, name LIMIT 0, 1";
+$qb = new QueryBuilder('master');
+$r = $qb->table('sample')
+    ->select(array('id', 'name'))
+    ->where('id = ?', array(2))
+    ->orderBY(array('id DESC', 'name'))
+    ->limit(0, 1);
+$test->is($r->getSql(), $expected, $expected);
 
 
+$expected = "SELECT id, name FROM sample WHERE id = ? ORDER BY id DESC, name LIMIT 10";
+$qb = new QueryBuilder('master');
+$r = $qb->table('sample')
+    ->select(array('id', 'name'))
+    ->where('id = ?', array(2))
+    ->orderBY(array('id DESC', 'name'))
+    ->limit(10);
+$test->is($r->getSql(), $expected, $expected);
 
 
 
