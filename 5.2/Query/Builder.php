@@ -80,17 +80,65 @@ class QueryBuilder
      * @var array
      */
     protected $bindings = array(
-        'where'  => [],
-        'having' => [],
-        'offset' => [],
-        'limit'  => [],
+        'where'  => array(),
+        'having' => array(),
+        'offset' => array(),
+        'limit'  => array(),
     );
 
+    protected $initialParams = array(
+        'table'     => '',
+        'tableAs'   => null,
+        'columns'   => array('*'),
+        'joinSql'   => array(),
+        'whereSql'  => null,
+        'orderSql'  => null,
+        'groupSql'  => null,
+        'havingSql' => null,
+        'offset'    => null,
+        'limit'     => null,
+    );
 
     public function __construct($connection, $table = null)
     {
+        $this->initialize();
         $this->connection = $connection;
         $this->table = $table;
+    }
+
+    /**
+     * inticalize query
+     * @param null $specific
+     * @return $this
+     */
+    public function initialize($specific = null)
+    {
+        if (is_null($specific)) {
+            foreach ($this->initialParams as $k => $v) {
+                $this->$k = $v;
+            }
+            $this->bindings = array(
+                'where'  => array(),
+                'having' => array(),
+                'offset' => array(),
+                'limit'  => array(),
+            );
+        } else {
+            $this->$specific = $this->initialParams[$specific];
+            if ($specific == 'where' || $specific == 'whereSql') {
+                $this->bindings['where'] = array();
+            }
+            if ($specific == 'having' || $specific == 'havingSql') {
+                $this->bindings['having'] = array();
+            }
+            if ($specific == 'offset') {
+                $this->bindings['offset'] = array();
+            }
+            if ($specific == 'limit') {
+                $this->bindings['limit'] = array();
+            }
+        }
+        return $this;
     }
 
     /**
@@ -243,15 +291,15 @@ class QueryBuilder
      * @param  mixed   $value
      * @param  string  $type
      * @return $this
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function addBinding($value, $type = 'where')
     {
         if(!array_key_exists($type, $this->bindings)) {
-            throw new \InvalidArgumentException("Invalid binding type: {$type}.");
+            throw new InvalidArgumentException("Invalid binding type: {$type}.");
         }
         if (is_array($value)) {
-            $this->bindings[$type] = array_values(array_merge($this->bindings[$type], $value));
+            $this->bindings[$type] = array_values($value);
         } else {
             if ($type == 'offset' || $type == 'limit') {
                 $this->bindings[$type][0] = $value;
