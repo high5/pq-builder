@@ -11,7 +11,7 @@
     processIsolation="false"
     stopOnFailure="false"
     syntaxCheck="true">
-    <testsuite name="Phalcon bootstrap Test Suite">
+    <testsuite name="pq-builder Test Suite">
         <directory>./</directory>
     </testsuite>
 </phpunit>
