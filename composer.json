@@ -1,0 +1,26 @@
+{
+    "name": "cave/phalcon",
+    "description": "cave phalcon framework",
+    "license": "MIT",
+    "autoload": {
+        "classmap": [
+            "app/base",
+            "app/library",
+            "app/managers",
+            "app/models",
+            "app/modules/admin/controllers",
+            "app/modules/front/controllers"
+        ]
+    },
+    "require" : {
+        "phalcon/incubator": "dev-master",
+		"fluent/logger": "v0.3.7"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "4.1.*"
+    },
+    "scripts": {
+        "post-autoload-dump": "./bin/composer/post-autoload-dump.php"
+    }
+}
+
